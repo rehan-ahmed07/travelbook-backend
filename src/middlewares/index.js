@@ -1,0 +1,2 @@
+// middlewares index
+module.exports = {};

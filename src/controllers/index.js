@@ -1,0 +1,2 @@
+// controllers index
+module.exports = {};
