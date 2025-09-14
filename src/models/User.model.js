@@ -12,6 +12,8 @@ const UserSchema = new Schema(
     location: { type: String },
     website: { type: String },
     verified: { type: Boolean, default: false },
+    emailNotifications: { type: Boolean, default: true },
+    pushNotifications: { type: Boolean, default: true },
     lastLoginAt: { type: Date },
   },
   { timestamps: true }

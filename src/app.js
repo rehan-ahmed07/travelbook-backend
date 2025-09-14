@@ -23,8 +23,11 @@ if (process.env.NODE_ENV !== "test") {
 
 app.use("/api/v1", routes);
 
+app.get("/", (req, res) => {
+  res.send("API is working");
+});
+
 app.get("/test", (req, res) => {
-  const { data } = req.body;
   res.send("API is working");
 });
 
