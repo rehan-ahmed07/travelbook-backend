@@ -1,6 +1,7 @@
 const Journal = require('../models/Journal.model');
 const Post = require('../models/Post.model');
 const { isFriends } = require('../utils/relations');
+const uploadFile = require('../services/storage.service');
 
 async function canViewJournal(user, journal) {
   if (!journal) return false;
@@ -13,9 +14,17 @@ async function canViewJournal(user, journal) {
 
 async function createJournal(req, res, next) {
   try {
-    const { title, description, coverMediaUrl, startDate, endDate, visibility } = req.body;
+    const { type, title, description, startDate, endDate, visibility } = req.body;
+    let coverMediaUrl = null;
+    
+    if (req.file) {
+      const uploadResult = await uploadFile(req.file);
+      coverMediaUrl = uploadResult.url;
+    }
+
     const journal = await Journal.create({
       owner: req.user._id,
+      type,
       title,
       description,
       coverMediaUrl,
@@ -51,7 +60,13 @@ async function updateJournal(req, res, next) {
     const journal = await Journal.findById(req.params.id);
     if (!journal) return res.status(404).json({ message: 'Journal not found' });
     if (!journal.owner.equals(req.user._id)) return res.status(403).json({ message: 'Forbidden' });
-    const fields = ['title', 'description', 'coverMediaUrl', 'startDate', 'endDate', 'visibility'];
+    
+    if (req.file) {
+      const uploadResult = await uploadFile(req.file);
+      journal.coverMediaUrl = uploadResult.url;
+    }
+
+    const fields = ['title', 'description', 'startDate', 'endDate', 'visibility'];
     for (const f of fields) if (typeof req.body[f] !== 'undefined') journal[f] = req.body[f];
     await journal.save();
     res.json({ journal });

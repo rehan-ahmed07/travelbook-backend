@@ -2,14 +2,15 @@ const express = require('express');
 const { body } = require('express-validator');
 const { requireAuth } = require('../middlewares/auth.middleware');
 const ctrl = require('../controllers/journal.controller');
+const upload = require('../middlewares/upload.middleware');
 
 const router = express.Router();
 
 // journals
-router.post('/', requireAuth, body('title').notEmpty(), ctrl.createJournal);
+router.post('/', requireAuth, body('title').notEmpty(), upload.single('coverMedia'), ctrl.createJournal);
 router.get('/', ctrl.listJournals);
 router.get('/:id', ctrl.getJournal);
-router.patch('/:id', requireAuth, ctrl.updateJournal);
+router.patch('/:id', requireAuth, upload.single('coverMedia'), ctrl.updateJournal);
 router.delete('/:id', requireAuth, ctrl.deleteJournal);
 
 // posts within a journal

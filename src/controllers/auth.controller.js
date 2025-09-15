@@ -31,10 +31,16 @@ async function login(req, res, next) {
   } catch (err) { next(err); }
 }
 
+async function logout(req, res) {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out' });
+}
+
+
 async function me(req, res) {
   if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
   const u = req.user;
   res.json({ user: { id: u._id, name: u.name, email: u.email, username: u.username, avatarUrl: u.avatarUrl } });
 }
 
-module.exports = { register, login, me };
+module.exports = { register, login, logout, me };
